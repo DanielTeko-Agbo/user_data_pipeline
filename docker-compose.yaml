@@ -77,6 +77,21 @@ services:
       PORT: 9021
     networks:
       - userNetwork
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - .vol/mongo:/data/db
+    networks:
+      - userNetwork
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWD}
+
 networks:
   userNetwork:
     driver: bridge
