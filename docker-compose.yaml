@@ -29,7 +29,6 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
       KAFKA_METRICS_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
-      # The bootstrap servers refer to your monitoring cluster
       KAFKA_CONFLUENT_METERICS_REPORTER_BOOTSTRAP_SERVERS: kafka:9092
 
   kafka-1:
@@ -54,7 +53,6 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
       KAFKA_METRICS_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
-      # The bootstrap servers refer to your monitoring cluster
       KAFKA_CONFLUENT_METERICS_REPORTER_BOOTSTRAP_SERVERS: kafka-1:9092
   
   control-center:
