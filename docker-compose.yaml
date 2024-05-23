@@ -1,11 +1,17 @@
 version: "3"
 services:
-  # dataGen: 
-  #   build: .
-  #   container_name: "user_pipeline_dataGen_container"
-  #   image: "user_pipeline_datagen"
-  #   volumes:
-  #     - .:/src
+  datagen: 
+    build: .
+    container_name: datagen
+    image: "userdatagen"
+    volumes:
+      - .:/src
+    networks:
+      - userNetwork
+    depends_on:
+      - kafka
+      - kafka-1
+      - mongo
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -51,7 +57,7 @@ services:
       KAFKA_LISTENERS: 'PLAINTEXT://kafka-1:29092,CONTROLLER://kafka-1:29093,PLAINTEXT_HOST://0.0.0.0:9092'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qv'
       KAFKA_METRICS_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
       KAFKA_CONFLUENT_METERICS_REPORTER_BOOTSTRAP_SERVERS: kafka-1:9092
   
