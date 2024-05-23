@@ -7,6 +7,8 @@ from configparser import ConfigParser
 import uuid
 import logging
 from logging.handlers import RotatingFileHandler
+from confluent_kafka import Producer
+
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s => %(message)s",
@@ -29,9 +31,14 @@ config.read(os.path.join(os.path.dirname(__file__), ".config.ini"))
 url = config["ReverseGeo"]["url"]
 apiKey = config["ReverseGeo"]["apiKey"]
 
+# Setting up the kafka producer object.
+producer = Producer({
+    "bootstrap.servers": "broker:29092, broker-1:29092"
+})
+
 def get_user():
     try:
-        req = requests.get("https://randomuser.me/api/")
+        req = requests.get("https://randomuser.me/api/?nat=gb,us,au")
         result = req.json()["results"][0]
     except Exception as err: 
         logging.error(f"Unable to generate randomUser: {err}")
@@ -64,16 +71,30 @@ def get_location():
         logging.info(f"Reverse Geocoding for ({lat}, {long}) passed")
         return res
 
-
+# Producer callback function.
+def callback(err, event):
+    if err:
+        logging.error(f'Produce to topic {event.topic()} failed for event: {event.key()}')
+    else:
+        val = event.value().decode('utf8')
+        logging.info(f'User details sent to partition {event.partition()}.')
+        
 try:
     user = get_user()
     phone = phonegen()
     location = get_location()
-
+    id = str(uuid.uuid1())
+    
     user["phone"] = phone
     user["location"] = location
-    user["id"] = str(uuid.uuid1())
+    user["id"] = id
+    
+    user = [user]
 except Exception as err:
     logging.error(f"User generation failed: {err}")
 else: 
     logging.info(f"User details generated : {user}")
+
+    for i in user:
+        producer.produce("userDetails", value=str(i).encode("utf-8"), key=id, on_delivery=callback)
+        producer.flush()
