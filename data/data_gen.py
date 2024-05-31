@@ -96,5 +96,5 @@ else:
     logging.info(f"User details generated : {user}")
 
     for i in user:
-        producer.produce("userDetails", value=str(i).encode("utf-8"), key=id, on_delivery=callback)
+        producer.produce("users", value=str(i).encode("utf-8"), key=id, on_delivery=callback)
         producer.flush()
