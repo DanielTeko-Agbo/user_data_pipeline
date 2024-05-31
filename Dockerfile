@@ -1,10 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 WORKDIR /src
 
 COPY . .
 
-RUN apt-get update && apt-get install -y cron
+RUN apt-get update && apt-get install -y cron && apt-get install make
 
 RUN pip install --upgrade pip 
 
